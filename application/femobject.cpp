@@ -1,4 +1,5 @@
 #include "femobject.h"
+#include <Qdebug>
 #include <cmath>
 #include <cstdlib>
 
@@ -28,8 +29,17 @@ void FEMObject::regularTriangulation(int n, int m, float r) {
 Vector<Vector<float, 2>, 3> FEMObject::findVectors(TSEdge<float> *e) {
   Array<TSTriangle<float> *> tr = e->getTriangle();
 
+  qDebug() << "tr " << (tr != NULL);
+  qDebug() << "tr 1 value" << (tr[0] != NULL) << " " << tr[0];
+
   Array<TSVertex<float> *> v1 = tr[0]->getVertices();
+
+  qDebug() << "v1 " << (v1 != NULL) << " " << v1;
+  qDebug() << "tr 1 value" << (tr[1] != NULL) << " " << tr[1];
+
   Array<TSVertex<float> *> v2 = tr[1]->getVertices();
+
+  qDebug() << "v2 " << (v2 != NULL);
 
   Point<float, 2> p0, p1, p2, p3;
 
@@ -79,37 +89,45 @@ Vector<Vector<float, 2>, 3> FEMObject::findVectors(TSTriangle<float> *tr,
 
 void FEMObject::computation() {
 
-  for (int i = 0; i < this->size(); i++) {
-    if (!getVertex(i)->boundary())
-      _nodes += Node(getVertex(i));
-  }
+  qDebug() << "size this" << this->size();
+  qDebug() << "size node" << _nodes.size();
 
+  for (int i = 0; i < this->size(); i++) {
+    qDebug() << (!getVertex(i)->boundary());
+
+    if (!getVertex(i)->boundary()) {
+      qDebug() << "here " << i;
+      _nodes += Node(getVertex(i));
+    }
+  }
+  qDebug() << "size node" << _nodes.size();
   // initiliazing the stiffnes matrix
   _A = DMatrix<float>(_nodes.size(), _nodes.size());
 
-  for (int i = 0; i < _A.getDim1(); i++) {
-    for (int j = 0; j < _A.getDim2(); j++) {
+  for (int i = 0; i < _nodes.size(); i++) {
+    for (int j = 0; j < _nodes.size(); j++) {
       _A[i][j] = 0;
     }
   }
 
+  qDebug() << _A;
   // initilizing b vector
   _b = DVector<float>(_nodes.size());
 
   //  Assembly of the stiffness matrix
   for (int i = 0; i < _nodes.size(); i++) {
-    for (int j = 0; j < _nodes.size(); j++) {
+    for (int j = 0; j < i; j++) {
 
-      //      std::cout << "A" << i << "," << j << " " << _A[i][j] <<
-      //      std::endl;
+      qDebug() << "node size " << _nodes.size() << " i " << i << " j " << j;
 
       TSEdge<float> *edge = _nodes[i].getNeighbor(_nodes[j]);
-
+      qDebug() << (edge != NULL);
       if (edge != NULL) {
 
         // compute non-diagonal element of the stiffness matrix
 
         auto const vec = findVectors(edge);
+        qDebug() << vec;
 
         auto const dd = 1 / (vec[0] * vec[0]);
         auto const dh1 = dd * vec[1] * vec[0];
@@ -130,9 +148,9 @@ void FEMObject::computation() {
 
     float diagonal_element = 0;
 
-    for (int k = 0; k < triangles.size(); k++) {
+    for (int j = 0; j < triangles.size(); j++) {
 
-      auto const vectors = findVectors(triangles[k], &_nodes[i]);
+      auto const vectors = findVectors(triangles[j], &_nodes[i]);
       diagonal_element +=
           (vectors[2] * vectors[2]) / (2 * std::abs(vectors[0] ^ vectors[1]));
     }

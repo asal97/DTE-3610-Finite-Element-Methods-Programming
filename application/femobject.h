@@ -25,6 +25,8 @@ public:
 
   Vector<Vector<float, 2>, 3> findVectors(TSTriangle<float> *tr, Node *n);
 
+  void fillInternalNodes();
+
   void computation();
   void UpdateHeight(float f);
   void setForce(float f);
