@@ -28,8 +28,8 @@ public:
   void fillInternalNodes();
 
   void computation();
-  void UpdateHeight(float f);
   void setForce(float f);
+  void solve();
 };
 
 #endif // FEMOBJECT_H

@@ -163,10 +163,12 @@ void FEMObject::computation() {
     _b[i] = _f * 1. / 3 * stk;
   }
 }
-void FEMObject::UpdateHeight(float f) {
-  for (int i = 0; i < _nodes.size(); i++) {
-    _nodes[i].setZ(_h[i] * f);
-  }
+
+void FEMObject::solve() {
+  DVector<float> x = _A.invert() * _b;
+  for (int i = 0; i < _nodes.size(); i++)
+    _nodes[i].setZ(x[i]);
+  _h = x;
 }
 
 void FEMObject::setForce(float f) { _f = f; }

@@ -71,9 +71,8 @@ void Scenario::initializeScenario() {
   fem->toggleDefaultVisualizer();
   fem->regularTriangulation(4, 3, 10);
   fem->setForce(1.0);
-
-  //  fem->triangulateDelaunay();
   fem->computation();
+  fem->solve();
 
   this->scene()->insert(fem);
   fem->replot();
