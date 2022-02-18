@@ -2,6 +2,7 @@
 #include <Qdebug>
 #include <cmath>
 #include <cstdlib>
+#include <random>
 
 using namespace GMlib;
 
@@ -25,6 +26,7 @@ void FEMObject::regularTriangulation(int n, int m, float r) {
   }
   this->triangulateDelaunay();
 }
+
 
 Vector<Vector<float, 2>, 3> FEMObject::findVectors(TSEdge<float> *e) {
   Array<TSTriangle<float> *> tr = e->getTriangle();
@@ -169,6 +171,11 @@ void FEMObject::solve() {
   for (int i = 0; i < _nodes.size(); i++)
     _nodes[i].setZ(x[i]);
   _h = x;
+}
+
+void FEMObject::updateHeight(float f) {
+  for (int i = 0; i < _nodes.size(); i++)
+    _nodes[i].setZ(_h[i] * f);
 }
 
 void FEMObject::setForce(float f) { _f = f; }

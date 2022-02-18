@@ -30,6 +30,14 @@ public:
   void computation();
   void setForce(float f);
   void solve();
+  void updateHeight(float f);
+
+protected:
+  void localSimulate(double dt) override {
+    static double t = 0;
+    t += dt;
+    this->updateHeight(std::sin(t));
+  }
 };
 
 #endif // FEMOBJECT_H

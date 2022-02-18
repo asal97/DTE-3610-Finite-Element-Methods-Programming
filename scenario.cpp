@@ -67,7 +67,7 @@ void Scenario::initializeScenario() {
   mm.set(45.0);
 
   //  auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
-  auto fem = new FEMObject();
+  fem = new FEMObject();
   fem->toggleDefaultVisualizer();
   fem->regularTriangulation(4, 3, 10);
   fem->setForce(1.0);
@@ -75,7 +75,7 @@ void Scenario::initializeScenario() {
   fem->solve();
 
   this->scene()->insert(fem);
-  fem->replot();
+  this->scene()->simulate();
 }
 
 void Scenario::cleanupScenario() {}
@@ -88,4 +88,6 @@ void Scenario::callDefferedGL() {
   for (int i = 0; i < e_obj.getSize(); i++)
     if (e_obj(i)->isVisible())
       e_obj[i]->replot();
+
+  fem->replot();
 }
